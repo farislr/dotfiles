@@ -1,0 +1,33 @@
+os: linux
+supported_distros: [ubuntu, arch]
+architecture: [x86_64, arm64]
+
+package_managers:
+  ubuntu: apt
+  arch: pacman
+
+packages:
+  common:
+    - neovim
+    - kitty
+    - zsh
+    - git
+  ubuntu_specific:
+    - software-properties-common
+  arch_specific:
+    - base-devel
+
+zsh_plugins:
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - powerlevel10k
+
+config_paths:
+  nvim: ~/.config/nvim
+  kitty: ~/.config/kitty
+  zsh: ~/.zshrc
+  opencode: ~/.config/OpenCode
+
+overrides:
+  kitty:
+    font_size: 12

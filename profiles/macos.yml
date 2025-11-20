@@ -1,0 +1,25 @@
+os: macos
+package_manager: brew
+architecture: [x86_64, arm64]
+
+packages:
+  - neovim
+  - kitty
+  - zsh
+  - git
+
+zsh_plugins:
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - powerlevel10k
+
+config_paths:
+  nvim: ~/.config/nvim
+  kitty: ~/.config/kitty
+  zsh: ~/.zshrc
+  opencode: ~/Library/Application Support/OpenCode
+
+overrides:
+  kitty:
+    font_size: 14
+    macos_titlebar_color: system

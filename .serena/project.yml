@@ -1,0 +1,3 @@
+project_name: dotfiles
+language: python
+description: Cross-platform dotfiles management system with device detection and automated installation

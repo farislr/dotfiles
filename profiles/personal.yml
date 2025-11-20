@@ -1,0 +1,16 @@
+profile_type: personal
+description: Personal configurations and overrides
+
+git:
+  user:
+    name: ""  # Fill in your personal name
+    email: ""  # Fill in your personal email
+
+zsh:
+  aliases:
+    personal_project: "cd ~/personal-projects"
+
+overrides:
+  # Add personal-specific overrides here
+  kitty:
+    background_opacity: 1.0

@@ -1,0 +1,16 @@
+profile_type: work
+description: Work-specific configurations and overrides
+
+git:
+  user:
+    name: ""  # Fill in your work name
+    email: ""  # Fill in your work email
+  
+zsh:
+  aliases:
+    work_proxy: "export https_proxy=http://proxy.company.com:8080"
+  
+overrides:
+  # Add work-specific overrides here
+  kitty:
+    background_opacity: 0.95

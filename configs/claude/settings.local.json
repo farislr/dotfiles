@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena__get_current_config",
+      "mcp__serena__check_onboarding_performed",
+      "mcp__serena__activate_project",
+      "Bash(backups/.gitignore)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
