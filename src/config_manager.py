@@ -106,60 +106,104 @@ class ConfigManager:
             print(f"Error creating symlink: {e}")
             return False
     
+    def _is_file_path(self, source: Path) -> bool:
+        """
+        Determine if source should be treated as file or directory.
+
+        Detection rules:
+        1. If source exists: check if it's a file
+        2. If doesn't exist: check if it has file extension
+        3. Check for common dotfiles without extensions
+        4. Fallback: treat as directory
+
+        Args:
+            source: Path to evaluate
+
+        Returns:
+            True if should be treated as file, False for directory
+        """
+        if source.exists():
+            return source.is_file()
+
+        # Check for common file patterns
+        if source.suffix:  # Has extension like .zshrc, .gitconfig
+            return True
+
+        # Common dotfiles without extensions
+        dotfile_names = {'.zshrc', '.zprofile', '.bashrc', '.bash_profile',
+                        '.vimrc', '.tmux.conf', '.gitconfig', '.gitignore_global'}
+        if source.name in dotfile_names:
+            return True
+
+        return False  # Default to directory
+
     def deploy_configs(self, profile: Dict, force: bool = False) -> Dict[str, bool]:
         """
         Deploy all configurations based on profile.
-        
+        Handles both directory and individual file symlinks.
+
         Args:
             profile: Loaded profile dictionary
             force: If True, overwrite existing configs
-        
+
         Returns:
             Dict of config_name -> success status
         """
         config_paths = profile.get("config_paths", {})
         results = {}
-        
+
         for config_name, target_path in config_paths.items():
             source = self.configs_dir / config_name
-            
+
             if not source.exists():
-                print(f"Warning: Config directory not found: {source}")
+                # Determine type for better error message
+                is_file = self._is_file_path(source)
+                item_type = "file" if is_file else "directory"
+                print(f"Warning: Config {item_type} not found: {source}")
                 results[config_name] = False
                 continue
-            
+
             success = self.create_symlink(source, target_path, force=force)
             results[config_name] = success
-        
+
         return results
     
     def check_conflicts(self, profile: Dict) -> List[Dict[str, str]]:
         """
         Check for existing configs that would conflict.
-        
+        Distinguishes between file and directory conflicts.
+
         Returns:
             List of conflicts with details
         """
         conflicts = []
         config_paths = profile.get("config_paths", {})
-        
+
         for config_name, target_path in config_paths.items():
             target = Path(target_path).expanduser()
-            
+
             if target.exists() or target.is_symlink():
                 # Check if it's already our symlink
                 if target.is_symlink():
                     source = self.configs_dir / config_name
-                    if target.resolve() == source.resolve():
+                    if source.exists() and target.resolve() == source.resolve():
                         continue  # Already linked correctly
-                
+
+                # Determine actual type based on what exists
+                if target.is_symlink():
+                    item_type = "symlink"
+                elif target.is_dir():
+                    item_type = "directory"
+                else:
+                    item_type = "file"
+
                 conflicts.append({
                     "name": config_name,
                     "path": str(target),
-                    "type": "directory" if target.is_dir() else "file",
+                    "type": item_type,
                     "is_symlink": target.is_symlink()
                 })
-        
+
         return conflicts
     
     def apply_overrides(self, config_name: str, overrides: Dict) -> bool:

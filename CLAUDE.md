@@ -64,7 +64,8 @@ DotfilesInstaller.run() orchestrates:
 **src/config_manager.py** (`ConfigManager`)
 - Profile loading and merging logic (YAML → dict)
 - Conflict detection (checks if target paths already exist)
-- Symlink creation from `configs/` to home directory
+- Symlink creation from `configs/` to home directory (supports both files and directories)
+- Auto-detection of file vs directory based on extensions and dotfile naming patterns
 - Profile merge order: OS profile → user profile (later overrides earlier)
 
 **src/backup.py** (`BackupManager`)
@@ -104,15 +105,24 @@ Profiles are YAML files defining OS-specific and user-specific configurations:
 ### Configuration Deployment
 
 **Symlink Strategy** (ConfigManager.create_symlink)
-```
-Source: dotfiles/configs/{tool}/
-Target: ~/.config/{tool}/ or ~/{tool}
 
-Example:
-configs/lazyvim/ → ~/.config/nvim
-configs/kitty/   → ~/.config/kitty
-configs/zsh/.zshrc → ~/.zshrc
+Supports both directory and individual file symlinks with automatic detection:
+
 ```
+Directory symlinks:
+  configs/lazyvim/ → ~/.config/nvim
+  configs/kitty/   → ~/.config/kitty
+
+Individual file symlinks:
+  configs/.zshrc → ~/.zshrc
+  configs/.gitconfig → ~/.gitconfig
+```
+
+**Auto-Detection Logic** (ConfigManager._is_file_path):
+1. If source exists: Check if it's a file or directory
+2. If source doesn't exist: Check for file extension (e.g., `.conf`, `.json`)
+3. Check for common dotfile names (`.zshrc`, `.vimrc`, `.gitconfig`, etc.)
+4. Default: Treat as directory
 
 Changes to files in `configs/` are immediately reflected in the user's environment (benefit of symlinks).
 
@@ -128,6 +138,7 @@ Changes to files in `configs/` are immediately reflected in the user's environme
 
 ### Adding New Tool Support
 
+**For directory configs:**
 1. Create config directory: `configs/newtool/`
 2. Add to OS profile:
    ```yaml
@@ -135,7 +146,24 @@ Changes to files in `configs/` are immediately reflected in the user's environme
    config_paths:
      newtool: ~/.config/newtool
    ```
-3. (Optional) Add package to install:
+
+**For individual file configs:**
+1. Create config file: `configs/.configfile` or `configs/tool/.configfile`
+2. Add to OS profile:
+   ```yaml
+   # profiles/macos.yml
+   config_paths:
+     # Auto-detected as file (has dotfile name pattern)
+     .zshrc: ~/.zshrc
+
+     # Auto-detected as file (has extension)
+     tool/.gitconfig: ~/.gitconfig
+
+     # Directory symlink for comparison
+     kitty: ~/.config/kitty
+   ```
+
+**Optional:** Add package to install:
    ```yaml
    packages:
      - newtool

@@ -11,15 +11,20 @@ packages:
 zsh_plugins:
   - zsh-autosuggestions
   - zsh-syntax-highlighting
-  - powerlevel10k
+  # - powerlevel10k
 
 config_paths:
+  # Directory symlinks
   nvim: ~/.config/nvim
   kitty: ~/.config/kitty
-  zsh: ~/.zshrc
   opencode: ~/Library/Application Support/OpenCode
+
+  # Individual file symlinks (auto-detected by extension or filename)
+  .zshrc: ~/.zshrc
+  # zsh/.zprofile: ~/.zprofile  # Example: additional zsh files
+  # git/.gitconfig: ~/.gitconfig  # Example: git config file
 
 overrides:
   kitty:
-    font_size: 14
+    font_size: 12
     macos_titlebar_color: system
