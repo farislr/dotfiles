@@ -41,14 +41,27 @@ alias l='ls -CF'
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 #[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+/opt/homebrew/bin/fastfetch
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 eval "$(oh-my-posh init zsh)"
 
-source ~/py_default/bin/activate
-
-export PATH=$PATH:~/.local/bin/
+source ~/py_3.13/bin/activate
 
 
+# opencode
+export PATH=/Users/farislr/.opencode/bin:$PATH
+
+export PATH=/Users/farislr/go/bin/:$PATH
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/farislr/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/farislr/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/farislr/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/farislr/google-cloud-sdk/completion.zsh.inc'; fi
+
+export PATH="$HOME/.local/bin:$PATH"
+. "$HOME/.cargo/env"
